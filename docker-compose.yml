@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  gin-hong-api:
+    build: ./
+    environment:
+      MYSQL_USER: gin-hong-api
+      MYSQL_PASSWORD: 123456
+      MYSQL_ADDR: mysql
+      MYSQL_DB: gin-hong-api
+      IS_DOCKER: is_docker
+    ports:
+      - 8800:9999
+    # 首次使用请先初始化
+    command: /opt/install -env docker
+    #volumes:
+    #   - ./conf.toml:/opt/conf.toml
+    depends_on:
+      - mysql
+      - redis
+    restart: always
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: gin-hong-api
+      MYSQL_USER: gin-hong-api
+      MYSQL_PASSWORD: 123456
+    ports:
+      - 3306:3306
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+
+  redis:
+    image: redis
+    ports:
+      - 6379:6379

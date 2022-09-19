@@ -1,0 +1,48 @@
+appname: test
+appsecret: test
+
+db:
+  database: gin-hong-api
+  host:     127.0.0.1
+  user:     root
+  password: 123456
+  port:     3306
+  prefix:   bs_
+
+redis:
+  host: 127.0.0.1
+  user: root
+  password:
+  port: 6379
+
+dingding:
+  errorpush : ""
+  xueqiucommentpush : ""
+  xueqiuselectpush : ""
+  ciyunpush : ""
+
+weixin:
+  errorpush : ""
+  xueqiucommentpush: ""
+  xueqiuselectpush: ""
+  ciyunpush: ""
+
+queue:
+  isopenmultithreading: 0
+
+domain:
+  domain : "localhost:8800"
+
+aliyunoss:
+  endpoint : ""
+  accessKeyId : ""
+  accessKeySecret : ""
+  bucketName : ""
+  bucketUrl : ""
+  basePath : ""
+
+jwt:
+  signingkey : ""
+  expirestime : ""
+  buffertime : ""
+  issuer : ""
