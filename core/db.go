@@ -6,6 +6,7 @@ import (
 	"gin/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"time"
 )
 
 func dbConnect() *gorm.DB {
@@ -21,10 +22,10 @@ func dbConnect() *gorm.DB {
 	//使用mysql 连接池
 	sqlDB, _ := db.DB()
 
-	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetConnMaxIdleTime(60)
-	sqlDB.SetConnMaxLifetime(60)
-	sqlDB.SetMaxOpenConns(10)
+	sqlDB.SetMaxIdleConns(2)
+	sqlDB.SetConnMaxIdleTime(10 * time.Second)
+	sqlDB.SetConnMaxLifetime(20 * time.Second) //连接池里面的连接最大存活时长。
+	sqlDB.SetMaxOpenConns(5)                   //连接池里最大空闲连接数
 
 	if err != nil {
 		panic(err)
