@@ -7,6 +7,7 @@ import (
 	"gin/config"
 	"github.com/go-redis/redis/v8"
 	"github.com/syyongx/php2go"
+	"log"
 	"time"
 )
 
@@ -15,7 +16,7 @@ var Redis *redis.Client
 var tag string = "tag_"
 
 // 初始化redis连接
-func Connect() {
+func Connect() *redis.Client {
 	name := config.Config.REDIS.Host
 	port := config.Config.REDIS.Port
 	password := config.Config.REDIS.Password
@@ -33,12 +34,18 @@ func Connect() {
 		panic("redis 连接失败!")
 	}
 
-	Redis = r
+	return r
+}
+
+//初始化Redis
+func InitRedis() {
+	log.Println("init redis ing...")
+	Redis = Connect()
+	log.Println("init redis ok...")
 }
 
 // Get 获取指定key值  如果redis没有这个key 返回"",false
 func Get(key string) (interface{}, bool) {
-	Connect()
 	var ctx = context.Background()
 	res, err := Redis.Get(ctx, key).Result()
 
@@ -61,8 +68,6 @@ func Get(key string) (interface{}, bool) {
 
 // 设置指定key值
 func Set(key string, value interface{}, expired int64) {
-
-	Connect()
 
 	dataType, _ := json.Marshal(value)
 
@@ -97,8 +102,6 @@ func Rmember(cacheKey string, callQuery func() interface{}, expired int64) inter
 // 推队列 左推 返回当前队列数量
 func Lpush(key string, value interface{}) int64 {
 
-	Connect()
-
 	dataType, _ := json.Marshal(value)
 
 	dataString := string(dataType)
@@ -116,8 +119,6 @@ func Lpush(key string, value interface{}) int64 {
 
 // 右推
 func Rpush(key string, value interface{}) int64 {
-
-	Connect()
 
 	dataType, _ := json.Marshal(value)
 
@@ -137,8 +138,6 @@ func Rpush(key string, value interface{}) int64 {
 // 右推
 func ZADD(key string, member string, score float64) {
 
-	Connect()
-
 	var ctx = context.Background()
 
 	items := &redis.Z{Score: score, Member: member}
@@ -153,8 +152,6 @@ func ZADD(key string, member string, score float64) {
 
 // 获取有序集合的成员数
 func ZCARD(key string) bool {
-
-	Connect()
 
 	var ctx = context.Background()
 
@@ -175,8 +172,6 @@ func ZCARD(key string) bool {
 // 返回有序集合中指定成员的索引
 func ZRANK(key string, member string) int64 {
 
-	Connect()
-
 	var ctx = context.Background()
 
 	res, err := Redis.ZRank(ctx, key, member).Result()
@@ -194,8 +189,6 @@ func ZRANK(key string, member string) int64 {
 // 获取有序集合的成员数
 func ZINCRBY(key string, incryment float64, member string) {
 
-	Connect()
-
 	var ctx = context.Background()
 
 	_, err := Redis.ZIncrBy(ctx, key, incryment, member).Result()
@@ -206,7 +199,6 @@ func ZINCRBY(key string, incryment float64, member string) {
 }
 
 func ZREVRANGE(key string, start int64, end int64) []string {
-	Connect()
 
 	var ctx = context.Background()
 
@@ -222,8 +214,6 @@ func ZREVRANGE(key string, start int64, end int64) []string {
 // 弹队列 左推 返回当前队列数量
 func Lpop(key string) string {
 
-	Connect()
-
 	var ctx = context.Background()
 
 	res, err := Redis.LPop(ctx, key).Result()
@@ -238,8 +228,6 @@ func Lpop(key string) string {
 // 弹队列 右弹 返回当前队列数量
 func Rpop(key string) string {
 
-	Connect()
-
 	var ctx = context.Background()
 
 	res, err := Redis.RPop(ctx, key).Result()
@@ -253,8 +241,6 @@ func Rpop(key string) string {
 
 // 弹队列 左弹多个值 返回当前队列数量
 func LpopMul(key string, len int64) []string {
-
-	Connect()
 
 	var ctx = context.Background()
 
@@ -271,8 +257,6 @@ func LpopMul(key string, len int64) []string {
 // 弹队列 右弹 返回当前队列数量
 func Llen(key string) int64 {
 
-	Connect()
-
 	var ctx = context.Background()
 
 	res, err := Redis.LLen(ctx, key).Result()
@@ -286,8 +270,6 @@ func Llen(key string) int64 {
 
 // 删除缓存
 func Del(key string) {
-
-	Connect()
 
 	var ctx = context.Background()
 

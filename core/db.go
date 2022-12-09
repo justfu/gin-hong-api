@@ -3,11 +3,13 @@ package core
 import (
 	"fmt"
 	"gin/config"
-	"gin/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"log"
 	"time"
 )
+
+var Db *gorm.DB
 
 func dbConnect() *gorm.DB {
 	host := config.Config.DB.Host
@@ -22,26 +24,26 @@ func dbConnect() *gorm.DB {
 	//使用mysql 连接池
 	sqlDB, _ := db.DB()
 
-	sqlDB.SetMaxIdleConns(2)
-	sqlDB.SetConnMaxIdleTime(10 * time.Second)
-	sqlDB.SetConnMaxLifetime(20 * time.Second) //连接池里面的连接最大存活时长。
-	sqlDB.SetMaxOpenConns(5)                   //连接池里最大空闲连接数
+	// SetMaxIdleConns 用于设置连接池中空闲连接的最大数量。
+	sqlDB.SetMaxIdleConns(10)
+
+	// SetMaxOpenConns 设置打开数据库连接的最大数量。
+	sqlDB.SetMaxOpenConns(10)
+
+	// SetConnMaxLifetime 设置了连接可复用的最大时间。
+	sqlDB.SetConnMaxLifetime(time.Minute * 50)
+
+	//sqlDB.SetConnMaxIdleTime(time.Minute * 2)
 
 	if err != nil {
+		log.Println("init db fail!!!")
 		panic(err)
 	}
 	return db
 }
 
-func Db() *gorm.DB {
-	return dbConnect()
-}
-
-func CreateTable() {
-	//创建bs表
-	Db().Model(&model.BsConfig{}).Debug().AutoMigrate(&model.BsConfig{})
-	Db().Model(&model.XueqiuUgc{}).Debug().AutoMigrate(&model.XueqiuUgc{})
-	Db().Model(&model.XueqiuUserSelect{}).Debug().AutoMigrate(&model.XueqiuUserSelect{})
-	Db().Model(&model.XueqiuUserSelectCombination{}).Debug().AutoMigrate(&model.XueqiuUserSelectCombination{})
-	Db().Model(&model.BsUserSelectCombinationHistory{}).Debug().AutoMigrate(&model.BsUserSelectCombinationHistory{})
+func InitDb() {
+	log.Println("init db ing...")
+	Db = dbConnect()
+	log.Println("init db ok")
 }

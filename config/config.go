@@ -2,6 +2,7 @@ package config
 
 import (
 	"gin/common/env"
+	"gin/config/system"
 	"github.com/jinzhu/configor"
 	"go/build"
 	"os"
@@ -81,7 +82,7 @@ func init() {
 	if gopath == "" {
 		gopath = build.Default.GOPATH
 	}
-	path := gopath + "/src/gin-hong-api/config"
+	path := gopath + "/src/" + system.System.ProjectName + "/config"
 	configor.New(&configor.Config{Debug: true}).Load(&Config, path+"/settings."+env+".yml")
 }
 

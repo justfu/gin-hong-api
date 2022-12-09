@@ -58,7 +58,7 @@ func GetUserInfoById(id int64) map[string]interface{} {
 
 func GetUserInfoById2(id int64) map[string]interface{} {
 	var result = map[string]interface{}{}
-	core.Db().Table("admin").Where("id = " + strconv.FormatInt(id, 10)).Find(&result)
+	core.Db.Table("admin").Where("id = " + strconv.FormatInt(id, 10)).Find(&result)
 	//log.Println(core.Db)
 	fmt.Println(result)
 	return result

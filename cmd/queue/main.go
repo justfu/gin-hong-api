@@ -2,11 +2,15 @@ package main
 
 import (
 	"gin/cmd/queue/job"
+	"gin/core"
+	"gin/core/redis"
 	"github.com/reugn/go-quartz/quartz"
 	"time"
 )
 
 func main() {
+	core.InitDb()
+	redis.InitRedis()
 	QueueJobs()
 }
 
